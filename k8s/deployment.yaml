@@ -13,8 +13,8 @@ spec:
         app: portfolio-app
     spec:
       containers:
-      - name: portfolio-container
-        image: himanshu085/himanshu-portfolio:latest
-        ports:
-        - containerPort: 80  # Expose the container on port 80
+        - name: portfolio-container
+          image: himanshu085/himanshu-portfolio:latest
+          ports:
+            - containerPort: 3000
 
