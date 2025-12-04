@@ -3,11 +3,12 @@ kind: Service
 metadata:
   name: portfolio-service
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: portfolio-app
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80  # Changed to 80 to match the container port
+      targetPort: 80
+      nodePort: 31568     # Fix for your exposed port
 
