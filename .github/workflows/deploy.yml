@@ -26,18 +26,14 @@ jobs:
         run: |
           docker push ${{ vars.DOCKERHUB_USERNAME }}/himanshu-portfolio:latest
 
-      - name: Set Kubernetes context
-        uses: azure/k8s-set-context@v3
+      - name: Deploy to Minikube via SSH
+        uses: appleboy/ssh-action@v0.1.10
         with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
-
-      # 🚀 Apply k8s YAML skipping validation and TLS
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f k8s/ --validate=false --insecure-skip-tls-verify=true
-          kubectl rollout restart deployment/portfolio-app --insecure-skip-tls-verify=true
-
-      - name: Verify rollout
-        run: |
-          kubectl rollout status deployment/portfolio-app --timeout=120s --insecure-skip-tls-verify=true
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/k8s-github-actions   # Directory where your repo exists on server
+            git pull                  # Sync latest changes
+            kubectl apply -f k8s/     # Deploy to Minikube
+            kubectl rollout status deployment/portfolio-app
