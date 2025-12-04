@@ -32,10 +32,10 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
 
-      # 🚀 Deploy to Minikube via Cloudflare tunnel
+      # 🚀 Apply k8s YAML skipping validation and TLS
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/ --insecure-skip-tls-verify=true
+          kubectl apply -f k8s/ --validate=false --insecure-skip-tls-verify=true
           kubectl rollout restart deployment/portfolio-app --insecure-skip-tls-verify=true
 
       - name: Verify rollout
