@@ -7,8 +7,7 @@ spec:
   selector:
     app: portfolio-app
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 80
-      nodePort: 31568     # Fix for your exposed port
+      nodePort: 30080
 
