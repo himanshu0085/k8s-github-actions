@@ -1,8 +1,11 @@
-FROM node:18-alpine
-WORKDIR /app
-COPY app/package*.json ./
-RUN npm install
-COPY app/ .
-EXPOSE 3000
-CMD ["node", "server.js"]
+FROM nginx:alpine
 
+# Remove default Nginx content
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy your static site
+COPY . /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
