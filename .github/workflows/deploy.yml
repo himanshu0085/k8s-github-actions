@@ -33,7 +33,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/k8s-github-actions   # Directory where your repo exists on server
-            git pull                  # Sync latest changes
-            kubectl apply -f k8s/     # Deploy to Minikube
+            cd ~/k8s-github-actions
+            git pull
+            kubectl apply -f k8s/
+            kubectl rollout restart deployment/portfolio-app
             kubectl rollout status deployment/portfolio-app
