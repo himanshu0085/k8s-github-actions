@@ -1,4 +1,4 @@
-name: Build Push and Deploy Node Portfolio
+name: Build Push and Deploy
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Login to Docker Hub
@@ -18,23 +18,14 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ vars.DOCKERHUB_USERNAME }}/himanshu-portfolio:latest .
+      - name: Build image
+        run: docker build -t ${{ vars.DOCKERHUB_USERNAME }}/himanshu-portfolio:latest .
 
-      - name: Push Docker image
-        run: |
-          docker push ${{ vars.DOCKERHUB_USERNAME }}/himanshu-portfolio:latest
+      - name: Push image
+        run: docker push ${{ vars.DOCKERHUB_USERNAME }}/himanshu-portfolio:latest
 
-      - name: Deploy to Minikube via SSH
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/k8s-github-actions
-            git pull
-            kubectl apply -f k8s/
-            kubectl rollout restart deployment/portfolio-app
-            kubectl rollout status deployment/portfolio-app
+      - name: Deploy to Minikube
+        run: |
+          kubectl apply -f k8s/
+          kubectl rollout restart deployment/portfolio-app
+          kubectl rollout status deployment/portfolio-app
