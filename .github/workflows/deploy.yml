@@ -32,11 +32,12 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
 
+      # 🚀 Deploy to Minikube via Cloudflare tunnel
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/ --validate=false
-          kubectl rollout restart deployment/portfolio-app
+          kubectl apply -f k8s/ --insecure-skip-tls-verify=true
+          kubectl rollout restart deployment/portfolio-app --insecure-skip-tls-verify=true
 
       - name: Verify rollout
         run: |
-          kubectl rollout status deployment/portfolio-app --timeout=120s
+          kubectl rollout status deployment/portfolio-app --timeout=120s --insecure-skip-tls-verify=true
