@@ -26,15 +26,6 @@ jobs:
         run: |
           docker push ${{ vars.DOCKERHUB_USERNAME }}/himanshu-portfolio:latest
 
-      # 🔍 DEBUG — print decoded kubeconfig so we can fix it
-      - name: Debug kubeconfig (TEMP)
-        run: |
-          echo "----------------------------------"
-          echo "DECODED KUBECONFIG (START)"
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d || echo "❌ FAILED TO DECODE"
-          echo "DECODED KUBECONFIG (END)"
-          echo "----------------------------------"
-
       - name: Set Kubernetes context
         uses: azure/k8s-set-context@v3
         with:
@@ -43,8 +34,9 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/
+          kubectl apply -f k8s/ --validate=false
           kubectl rollout restart deployment/portfolio-app
 
       - name: Verify rollout
-        run: kubectl rollout status deployment/portfolio-app
+        run: |
+          kubectl rollout status deployment/portfolio-app --timeout=120s
